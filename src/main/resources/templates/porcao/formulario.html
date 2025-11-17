@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Manter Porcão')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Porcão')}"></header>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center" th:text="(${porcao.id != null} ? 'Editar Porcão' : 'Nova Porcão')"></h2>
+
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        [[${error}]]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <form th:action="@{/porcao/salvar}" th:object="${porcao}" method="post">
+        <input type="hidden" th:field="*{id}" />
+          
+             <div class="col-md-4 form-group">
+                <label for="valor">Tamanho: </label>
+                <input class="form-control" type="number" step="0.01" th:field="*{tamanho}"
+                       th:classappend="${#fields.hasErrors('tamanho')} ? 'is-invalid'">
+                <div th:errors="*{tamanho}" class="invalid-feedback"></div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <span th:text="${porcao.id != null} ? 'Atualizar' : 'Cadastrar'"></span>
+        </button>
+        <a th:href="@{/porcao}" class="btn btn-secondary">Cancelar</a>
+    </form>
+    
+</div>
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

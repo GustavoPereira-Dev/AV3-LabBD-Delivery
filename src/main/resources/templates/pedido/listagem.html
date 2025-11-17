@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Listagem Pedidos')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Pedido')}"></header>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center">Lista de Pedidos</h2>
+    
+    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        [[${message}]]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        [[${error}]]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <a th:href="@{/pedido/formulario}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus me-1"></i> Novo Pedido
+    </a>
+    
+    <div th:if="${!listaPedidos.isEmpty()}">
+        <table class="table table-hover table-responsive-xl">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Prato</th>
+                <th scope="col">Porção</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pedido : ${listaPedidos}">
+                <td th:text="${'#' + pedido.id}"></td>
+                <td th:text="${pedido.cliente.nome}"></td>
+                <td th:text="${pedido.prato.nome}"></td>
+                <td th:text="${pedido.porcao.tamanho}"></td>
+                <td th:text="${'R$ ' + #numbers.formatDecimal(pedido.valor, 1, 'POINT', 2, 'COMMA')}"></td>
+                <td>
+                    <a th:href="@{/pedido/formulario(id=${pedido.id})}"
+                       title="Editar o Pedido"
+                       class="fa-regular fa-pen-to-square icon-dark me-2"></a>
+                    <a th:href="@{/pedido/delete/{id}(id=${pedido.id})}"
+                       th:title="'Apagar Pedido #' + ${pedido.id}"
+                       class="fa-regular fa-trash-can icon-dark btn-delete"
+                       onclick="return confirm('Tem certeza que deseja apagar este pedido?');"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${listaPedidos.isEmpty()}" class="alert alert-info text-center">
+        Nenhum pedido cadastrado.
+    </div>
+</div>
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
