@@ -25,7 +25,7 @@ public class PorcaoController {
 
     @GetMapping
     public String carregarPaginaListagem(Model model) {
-        model.addAttribute("listaItens", tipoService.procurarTodos());
+        model.addAttribute("listaPorcoes", tipoService.procurarTodos());
         return "porcao/listagem";
     }
 
@@ -39,17 +39,17 @@ public class PorcaoController {
         } else {
             dto = new AtualizacaoPorcao(null, null);
         }
-        model.addAttribute("item", dto);
+        model.addAttribute("porcao", dto);
         return "porcao/formulario";
     }
 
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute("item") @Valid AtualizacaoPorcao dto,
+    public String salvar(@ModelAttribute("porcao") @Valid AtualizacaoPorcao dto,
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
                          Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("item", dto);
+            model.addAttribute("porcao", dto);
             return "porcao/formulario";
         }
         try {

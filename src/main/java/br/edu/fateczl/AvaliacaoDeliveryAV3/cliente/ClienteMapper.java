@@ -4,8 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IMapper;
+
 @Mapper(componentModel = "spring")
-public interface ClienteMapper {
+public interface ClienteMapper extends IMapper<AtualizacaoCliente, Cliente> {
 
     // Converte Entity para DTO
     AtualizacaoCliente toAtualizacaoDto(Cliente cliente);

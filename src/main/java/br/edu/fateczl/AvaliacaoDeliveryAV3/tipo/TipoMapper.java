@@ -4,8 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IMapper;
+
 @Mapper(componentModel = "spring")
-public interface TipoMapper {
+public interface TipoMapper extends IMapper<AtualizacaoTipo, Tipo> {
     AtualizacaoTipo toAtualizacaoDto(Tipo tipo);
     @Mapping(target = "pratos", ignore = true)
     Tipo toEntityFromAtualizacao(AtualizacaoTipo dto);

@@ -6,13 +6,14 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import br.edu.fateczl.AvaliacaoDeliveryAV3.ingrediente.Ingrediente;
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IMapper;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.Tipo;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface PratoMapper {
+public interface PratoMapper extends IMapper<AtualizacaoPrato, Prato> {
 
     // Converte Entity para DTO
     @Mapping(target = "tipoId", source = "tipo.id")

@@ -25,7 +25,7 @@ public class TipoController {
 
     @GetMapping
     public String carregarPaginaListagem(Model model) {
-        model.addAttribute("listaItens", tipoService.procurarTodos());
+        model.addAttribute("listaTipos", tipoService.procurarTodos());
         return "tipo/listagem"; // Usará um HTML genérico
     }
 
@@ -39,12 +39,12 @@ public class TipoController {
         } else {
             dto = new AtualizacaoTipo(null, "");
         }
-        model.addAttribute("item", dto);
+        model.addAttribute("tipo", dto);
         return "tipo/formulario"; // Usará um HTML genérico
     }
 
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute("item") @Valid AtualizacaoTipo dto,
+    public String salvar(@ModelAttribute("tipo") @Valid AtualizacaoTipo dto,
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
                          Model model) {

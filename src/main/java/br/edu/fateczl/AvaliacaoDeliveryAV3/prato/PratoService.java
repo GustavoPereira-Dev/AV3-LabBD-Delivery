@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.edu.fateczl.AvaliacaoDeliveryAV3.ingrediente.Ingrediente;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.ingrediente.IngredienteRepository;
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IService;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.Tipo;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.TipoService;
 
@@ -16,12 +17,13 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class PratoService {
+public class PratoService implements IService<Prato, AtualizacaoPrato, Integer> {
     @Autowired private PratoRepository pratoRepository;
     @Autowired private PratoMapper pratoMapper;
     @Autowired private TipoService tipoService;
     @Autowired private IngredienteRepository ingredienteRepository; // Usamos Repository pois é só busca
 
+    @Override
     public Prato salvarOuAtualizar(AtualizacaoPrato dto) {
         // 1. Valida e busca o Tipo (ManyToOne)
         Tipo tipo = tipoService.procurarPorId(dto.tipoId())
@@ -55,15 +57,22 @@ public class PratoService {
         return pratoRepository.save(prato);
     }
 
+    @Override
     public List<Prato> procurarTodos() {
         return pratoRepository.findAll(Sort.by("nome").ascending());
     }
 
+    @Override
     public void apagarPorId(Integer id) {
         pratoRepository.deleteById(id);
     }
 
+    @Override
     public Optional<Prato> procurarPorId(Integer id) {
         return pratoRepository.findById(id);
+    }
+    
+    public long contar() {
+        return pratoRepository.count();
     }
 }

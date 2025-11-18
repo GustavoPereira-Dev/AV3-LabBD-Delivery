@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.edu.fateczl.AvaliacaoDeliveryAV3.cliente.Cliente;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.cliente.ClienteService;
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IService;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.porcao.Porcao;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.porcao.PorcaoService;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.prato.Prato;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PedidoService {
+public class PedidoService implements IService<Pedido, AtualizacaoPedido, Integer> {
     @Autowired private PedidoRepository pedidoRepository;
     @Autowired private PedidoMapper pedidoMapper;
     @Autowired private ClienteService clienteService;
@@ -63,5 +64,10 @@ public class PedidoService {
 
     public Optional<Pedido> procurarPorId(Integer id) {
         return pedidoRepository.findById(id);
+    }
+    
+ // Exemplo no ClienteService.java (fazer o mesmo em todos os outros Services)
+    public long contar() {
+        return pedidoRepository.count();
     }
 }

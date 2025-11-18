@@ -25,7 +25,7 @@ public class IngredienteController {
 
     @GetMapping
     public String carregarPaginaListagem(Model model) {
-        model.addAttribute("listaItens", tipoService.procurarTodos());
+        model.addAttribute("listaIngredientes", tipoService.procurarTodos());
         return "ingrediente/listagem";
     }
 
@@ -39,17 +39,17 @@ public class IngredienteController {
         } else {
             dto = new AtualizacaoIngrediente(null, null, null);
         }
-        model.addAttribute("item", dto);
+        model.addAttribute("ingrediente", dto);
         return "ingrediente/formulario";
     }
 
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute("item") @Valid AtualizacaoIngrediente dto,
+    public String salvar(@ModelAttribute("ingrediente") @Valid AtualizacaoIngrediente dto,
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
                          Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("item", dto);
+            model.addAttribute("ingrediente", dto);
             return "ingrediente/formulario";
         }
         try {

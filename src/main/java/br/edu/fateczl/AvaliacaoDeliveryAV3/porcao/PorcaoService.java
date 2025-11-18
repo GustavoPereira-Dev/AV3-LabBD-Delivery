@@ -7,13 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class PorcaoService {
+public class PorcaoService implements IService<Porcao, AtualizacaoPorcao, Integer> {
     @Autowired private PorcaoRepository porcaoRepository;
     @Autowired private PorcaoMapper porcaoMapper;
 
+    @Override
     public Porcao salvarOuAtualizar(AtualizacaoPorcao dto) {
         if (dto.id() != null) {
         	Porcao existente = porcaoRepository.findById(dto.id())
@@ -26,15 +28,23 @@ public class PorcaoService {
         }
     }
     
+    @Override
     public List<Porcao> procurarTodos() {
         return porcaoRepository.findAll(Sort.by("tamanho").ascending());
     }
     
+    @Override
     public void apagarPorId(Integer id) {
     	porcaoRepository.deleteById(id);
     }
     
+    @Override
     public Optional<Porcao> procurarPorId(Integer id) {
         return porcaoRepository.findById(id);
+    }
+    
+    @Override
+    public long contar() {
+        return porcaoRepository.count();
     }
 }

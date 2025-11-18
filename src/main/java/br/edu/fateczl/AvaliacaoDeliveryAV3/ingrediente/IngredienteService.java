@@ -7,13 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class IngredienteService {
+public class IngredienteService implements IService<Ingrediente, AtualizacaoIngrediente, Integer>{
     @Autowired private IngredienteRepository ingredienteRepository;
     @Autowired private IngredienteMapper ingredienteMapper;
 
+    @Override
     public Ingrediente salvarOuAtualizar(AtualizacaoIngrediente dto) {
         if (dto.id() != null) {
         	Ingrediente existente = ingredienteRepository.findById(dto.id())
@@ -26,15 +28,23 @@ public class IngredienteService {
         }
     }
     
+    @Override
     public List<Ingrediente> procurarTodos() {
-        return ingredienteRepository.findAll(Sort.by("tamanho").ascending());
+        return ingredienteRepository.findAll(Sort.by("nome").ascending());
     }
     
+    @Override
     public void apagarPorId(Integer id) {
     	ingredienteRepository.deleteById(id);
     }
     
+    @Override
     public Optional<Ingrediente> procurarPorId(Integer id) {
         return ingredienteRepository.findById(id);
+    }
+    
+    @Override
+    public long contar() {
+        return ingredienteRepository.count();
     }
 }

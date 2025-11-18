@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/head :: head('Ficha Técnica')}"></head>
+<body>
+<header th:replace="~{fragmentos/header :: header(activePage='Prato')}"></header>
+
+<div class="container-fluid" style="max-width: 1000px; margin: 0 auto;">
+    <h2 class="text-center mt-4">Ficha Técnica (Pratos e Ingredientes)</h2>
+    <p class="text-center text-muted">Gerencie quais ingredientes compõem cada prato em cada tamanho.</p>
+
+    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        [[${message}]]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${param.saved}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <i class="fas fa-check-circle me-2"></i> Operação realizada com sucesso!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        [[${error}]]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#formModal" 
+            th:data-url="@{/ficha-tecnica/formulario}">
+        <i class="fas fa-plus me-1"></i> Vincular Ingrediente
+    </button>
+
+    <div th:if="${!listaFichas.isEmpty()}">
+        <table class="table table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th>Prato</th>
+                <th>Ingrediente</th>
+                <th>Porção (Tamanho)</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${listaFichas}">
+                <td th:text="${item.prato.nome}"></td>
+                <td th:text="${item.ingrediente.nome}"></td>
+                <td th:text="${item.porcao.tamanho}"></td>
+                <td>
+                    <a th:href="@{/ficha-tecnica/delete(pratoId=${item.prato.id}, ingredienteId=${item.ingrediente.id}, porcaoId=${item.porcao.id})}"
+                       title="Remover Vínculo"
+                       class="fa-regular fa-trash-can icon-dark btn-delete"
+                       onclick="return confirm('Tem certeza que deseja remover este ingrediente deste prato?');"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${listaFichas.isEmpty()}" class="alert alert-info text-center">
+        Nenhuma ficha técnica cadastrada.
+    </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="modalContentContainer">
+                <div class="modal-header"><h5 class="modal-title">Carregando...</h5></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragmentos/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Função global para controlar o envio
+    async function submeterFormulario(event) {
+        event.preventDefault(); // Impede o envio padrão (evita tela branca)
+        
+        const form = event.target;
+        const modalContentContainer = document.getElementById('modalContentContainer');
+        const modalElement = document.getElementById('formModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+
+        try {
+            // Faz o envio via AJAX
+            const response = await fetch(form.getAttribute('action'), {
+                method: 'POST',
+                body: new FormData(form)
+            });
+
+            const resultHtml = await response.text();
+
+            // Verifica se é o HTML de sucesso (procura pela DIV invisível do modalSuccess.html)
+            if (resultHtml.includes('id="modal-success-indicator"')) {
+                if (modalInstance) modalInstance.hide();
+                
+                // Recarrega a página passando o parâmetro saved=true para mostrar o alerta verde
+                const currentUrl = window.location.href.split('?')[0];
+                window.location.href = currentUrl + "?saved=true";
+                
+            } else {
+                // Se deu erro (validação), desenha o formulário com erros dentro do modal
+                modalContentContainer.innerHTML = resultHtml;
+            }
+        } catch (error) {
+            console.error("Erro ao enviar:", error);
+            modalContentContainer.innerHTML = `<div class="alert alert-danger">Erro de comunicação com o servidor.</div>`;
+        }
+    }
+
+    // Lógica de abertura do Modal
+    document.addEventListener('DOMContentLoaded', function () {
+        const formModal = document.getElementById('formModal');
+        const modalContentContainer = document.getElementById('modalContentContainer');
+
+        formModal.addEventListener('show.bs.modal', async function (event) {
+            const button = event.relatedTarget;
+            if (!button) return; 
+            const url = button.getAttribute('data-url');
+
+            try {
+                modalContentContainer.innerHTML = '<div class="modal-header"><h5 class="modal-title">Carregando...</h5></div>';
+                const response = await fetch(url);
+                const formHtml = await response.text();
+                modalContentContainer.innerHTML = formHtml;
+            } catch (error) {
+                modalContentContainer.innerHTML = `<div class="modal-body text-danger">Erro ao carregar formulário.</div>`;
+            }
+        });
+    });
+</script>
+
+<div th:fragment="modalFormContent">
+    <form th:action="@{/ficha-tecnica/salvar}" 
+          th:object="${ficha}" 
+          method="post"
+          onsubmit="submeterFormulario(event)"> 
+          
+        <div class="modal-header">
+            <h5 class="modal-title">Vincular Prato, Ingrediente e Porção</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+            <div th:if="${error != null}" class="alert alert-danger">[[${error}]]</div>
+
+            <div class="form-group mb-3">
+                <label>Prato:</label>
+                <select th:field="*{pratoId}" class="form-control" th:classappend="${#fields.hasErrors('pratoId')} ? 'is-invalid'">
+                    <option value="">-Selecione-</option>
+                    <option th:each="p : ${pratos}" th:value="${p.id}" th:text="${p.nome}"></option>
+                </select>
+                <div th:errors="*{pratoId}" class="invalid-feedback"></div>
+            </div>
+            <div class="form-group mb-3">
+                <label>Ingrediente:</label>
+                <select th:field="*{ingredienteId}" class="form-control" th:classappend="${#fields.hasErrors('ingredienteId')} ? 'is-invalid'">
+                    <option value="">-Selecione-</option>
+                    <option th:each="i : ${ingredientes}" th:value="${i.id}" th:text="${i.nome}"></option>
+                </select>
+                <div th:errors="*{ingredienteId}" class="invalid-feedback"></div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Porção/Tamanho:</label>
+                <select th:field="*{porcaoId}" class="form-control" th:classappend="${#fields.hasErrors('porcaoId')} ? 'is-invalid'">
+                    <option value="">-Selecione-</option>
+                    <option th:each="po : ${porcoes}" th:value="${po.id}" th:text="${po.tamanho}"></option>
+                </select>
+                <div th:errors="*{porcaoId}" class="invalid-feedback"></div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Vínculo</button>
+        </div>
+          
+       <div class="container text-center">
+       	   <div class="col" style="margin: 10px">
+	       		<button type="button" class="btn btn-info" >Listar pratos com seus ingredientes</button>
+	       </div>
+	        <div class="col" style="margin: 10px">
+	       		<button type="button" class="btn btn-info" >Relatório de pratos, ingredientes, porções e valores de um tipo</button>
+	       </div>
+	       <div class="col" style="margin: 10px">
+	       		<button type="button" class="btn btn-info" >Relatório de um pedido (com valor total) pedido atual de um cliente</button>
+	       </div>   
+	       <div class="col" style="margin: 10px">
+	       		<button type="button" class="btn btn-info" >Relatório de dados do pratos, ingredientes, porção, valor e cliente de um determinado dia</button>
+	       </div>         
+       </div>
+
+
+           
+    </form>
+</div>
+
+</body>
+</html>

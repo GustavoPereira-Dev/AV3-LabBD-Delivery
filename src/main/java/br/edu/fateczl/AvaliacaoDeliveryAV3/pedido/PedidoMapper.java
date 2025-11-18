@@ -6,11 +6,12 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import br.edu.fateczl.AvaliacaoDeliveryAV3.cliente.Cliente;
+import br.edu.fateczl.AvaliacaoDeliveryAV3.interfaces.IMapper;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.porcao.Porcao;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.prato.Prato;
 
 @Mapper(componentModel = "spring")
-public interface PedidoMapper {
+public interface PedidoMapper extends IMapper<AtualizacaoPedido, Pedido> {
 
     // Entity para DTO
     @Mapping(target = "clienteCpf", source = "cliente.cpf")
