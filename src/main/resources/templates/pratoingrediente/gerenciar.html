@@ -176,18 +176,11 @@
         </div>
           
        <div class="container text-center">
-       	   <div class="col" style="margin: 10px">
-	       		<button type="button" class="btn btn-info" >Listar pratos com seus ingredientes</button>
-	       </div>
-	        <div class="col" style="margin: 10px">
-	       		<button type="button" class="btn btn-info" >Relatório de pratos, ingredientes, porções e valores de um tipo</button>
-	       </div>
-	       <div class="col" style="margin: 10px">
-	       		<button type="button" class="btn btn-info" >Relatório de um pedido (com valor total) pedido atual de um cliente</button>
-	       </div>   
-	       <div class="col" style="margin: 10px">
-	       		<button type="button" class="btn btn-info" >Relatório de dados do pratos, ingredientes, porção, valor e cliente de um determinado dia</button>
-	       </div>         
+		   <form th:action="@{/pratoingrediente/relatorio}" th:object="${pedido}" method="get">
+		       <div class="col" style="margin: 10px">
+		       		<button type="button" class="btn btn-info" >Relatório de dados do pratos, ingredientes, porção, valor e cliente de um determinado dia</button>
+		       </div>    
+	       </form>     
        </div>
 
 

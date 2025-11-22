@@ -38,6 +38,10 @@
                        th:title="'Apagar ' + ${tipo.nome}"
                        class="fa-regular fa-trash-can icon-dark btn-delete"
                        onclick="return confirm('Tem certeza que deseja apagar este tipo?');"></a>
+                    <a th:href="@{/tipo/relatorio/{nome}(nome=${tipo.nome})}"
+                       th:title="'Fazer Relatório ' + ${tipo.nome}"
+                       target="_blank"
+                       class="fa-solid fa-print"></a>
                 </td>
             </tr>
             </tbody>

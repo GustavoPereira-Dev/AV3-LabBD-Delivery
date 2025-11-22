@@ -13,13 +13,17 @@ public record AtualizacaoCliente(
         @NotBlank(message = "Nome é obrigatório")
         String nome,
 
+        @NotBlank(message = "Telefone é obrigatório")
         String telefone,
+        
+        @NotBlank(message = "Endereço é obrigatório")
         String endereco,
 
         @NotNull(message = "Número é obrigatório")
         @Positive(message = "Número deve ser positivo")
         Integer numero,
 
+        @NotBlank(message = "CEP é obrigatório")
         @Size(min = 8, max = 8, message = "CEP deve ter 8 caracteres")
         String cep,
 

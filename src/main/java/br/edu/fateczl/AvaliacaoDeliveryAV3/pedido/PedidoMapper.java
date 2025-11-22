@@ -44,7 +44,7 @@ public interface PedidoMapper extends IMapper<AtualizacaoPedido, Pedido> {
     }
 
     @Named("idToPrato")
-    default Prato idToPrato(Integer pratoId) {
+    default Prato idToPrato(String pratoId) {
         if (pratoId == null) return null;
         Prato prato = new Prato();
         prato.setId(pratoId);

@@ -24,12 +24,14 @@
             <thead class="thead-light">
             <tr>
                 <th scope="col">Tamanho</th>
+                <th scope="col">Valor</th>
                 <th scope="col">Ações</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="porcao : ${listaPorcoes}">
                 <td th:text="${porcao.tamanho}"></td>
+                <td th:text="${porcao.valor}"></td>
                 <td>
                     <a th:href="@{/porcao/formulario(id=${porcao.id})}"
                        title="Editar a Porção"

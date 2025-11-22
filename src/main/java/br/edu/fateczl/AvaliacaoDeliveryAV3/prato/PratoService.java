@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class PratoService implements IService<Prato, AtualizacaoPrato, Integer> {
+public class PratoService implements IService<Prato, AtualizacaoPrato, String> {
     @Autowired private PratoRepository pratoRepository;
     @Autowired private PratoMapper pratoMapper;
     @Autowired private TipoService tipoService;
@@ -52,7 +52,6 @@ public class PratoService implements IService<Prato, AtualizacaoPrato, Integer> 
 
         // 3. Define as relações na entidade
         prato.setTipo(tipo);
-        prato.setIngredientes(ingredientes);
 
         return pratoRepository.save(prato);
     }
@@ -63,12 +62,12 @@ public class PratoService implements IService<Prato, AtualizacaoPrato, Integer> 
     }
 
     @Override
-    public void apagarPorId(Integer id) {
+    public void apagarPorId(String id) {
         pratoRepository.deleteById(id);
     }
 
     @Override
-    public Optional<Prato> procurarPorId(Integer id) {
+    public Optional<Prato> procurarPorId(String id) {
         return pratoRepository.findById(id);
     }
     

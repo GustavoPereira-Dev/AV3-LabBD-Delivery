@@ -66,7 +66,7 @@ public class PratoIngredienteController {
 
     @GetMapping("/delete")
     @Transactional
-    public String deletar(@RequestParam Integer pratoId, 
+    public String deletar(@RequestParam String pratoId, 
                           @RequestParam Integer ingredienteId, 
                           @RequestParam Integer porcaoId,
                           RedirectAttributes redirectAttributes) {

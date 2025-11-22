@@ -3,6 +3,7 @@ package br.edu.fateczl.AvaliacaoDeliveryAV3.porcao;
 import java.util.Set;
 
 import br.edu.fateczl.AvaliacaoDeliveryAV3.pedido.Pedido;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,7 +27,13 @@ public class Porcao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    
+    @Column(length = 10)
     private String tamanho;
+
+    @Column(precision = 7) // Novo campo conforme DER
+    private Double valor;
+
     
     @OneToMany(mappedBy = "porcao")
     private Set<Pedido> pedidos;

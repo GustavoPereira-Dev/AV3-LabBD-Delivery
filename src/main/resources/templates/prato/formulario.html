@@ -20,6 +20,12 @@
                    th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'">
             <div th:errors="*{nome}" class="invalid-feedback"></div>
         </div>
+        <div class="form-group mb-3">
+            <label for="valor">Valor:</label>
+            <input class="form-control" type="number" step="0.01" th:field="*{valor}"
+                   th:classappend="${#fields.hasErrors('valor')} ? 'is-invalid'">
+            <div th:errors="*{valor}" class="invalid-feedback"></div>
+        </div>
 
         <div class="form-group mb-3">
             <label>Tipo:</label>
@@ -33,21 +39,6 @@
             </select>
             <div th:errors="*{tipoId}" class="invalid-feedback"></div>
         </div>
-
-        <div class="form-group mb-3">
-            <label>Ingredientes (Segure Ctrl/Cmd para selecionar vários):</label>
-            <select th:field="*{ingredienteIds}"
-                    class="form-control"
-                    multiple="multiple"
-                    size="8"
-                    th:classappend="${#fields.hasErrors('ingredienteIds')} ? 'is-invalid'">
-                <option th:each="ing : ${ingredientes}"
-                        th:value="${ing.id}"
-                        th:text="${ing.nome}"></option>
-            </select>
-            <div th:errors="*{ingredienteIds}" class="invalid-feedback"></div>
-        </div>
-
 
         <button type="submit" class="btn btn-primary">
             <span th:text="${prato.id != null} ? 'Atualizar' : 'Cadastrar'"></span>

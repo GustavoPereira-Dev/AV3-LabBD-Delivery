@@ -37,7 +37,7 @@ public class PorcaoController {
                     .orElseThrow(() -> new EntityNotFoundException("Item não encontrado"));
             dto = tipoMapper.toAtualizacaoDto(item);
         } else {
-            dto = new AtualizacaoPorcao(null, null);
+            dto = new AtualizacaoPorcao(null, null, null);
         }
         model.addAttribute("porcao", dto);
         return "porcao/formulario";

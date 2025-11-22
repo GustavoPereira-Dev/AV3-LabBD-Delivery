@@ -1,15 +1,14 @@
 package br.edu.fateczl.AvaliacaoDeliveryAV3.prato;
 
-
+import br.edu.fateczl.AvaliacaoDeliveryAV3.pedido.Pedido;
+import br.edu.fateczl.AvaliacaoDeliveryAV3.prato_ingrediente.PratoIngrediente;
+import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.Tipo;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
-
-import br.edu.fateczl.AvaliacaoDeliveryAV3.ingrediente.Ingrediente;
-import br.edu.fateczl.AvaliacaoDeliveryAV3.pedido.Pedido;
-import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.Tipo;
 
 @Entity
 @Table(name = "prato")
@@ -21,26 +20,30 @@ import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.Tipo;
 public class Prato {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
     
+    @Column(length = 50, nullable = false) // SQL: varchar(50) NOT NULL
     private String nome;
 
+    @Column(precision = 7, nullable = false) // SQL: DECIMAL(7,2) NOT NULL
+    private Double valor;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tipo")
+    @JoinColumn(name = "id_tipo", nullable = false)
     private Tipo tipo;
 
     @OneToMany(mappedBy = "prato")
     private Set<Pedido> pedidos;
 
-    @ManyToMany
-    @JoinTable(
-            name = "prato_ingrediente",
-            joinColumns = @JoinColumn(name = "id_prato"),
-            inverseJoinColumns = @JoinColumn(name = "id_ingrediente")
-    )
-    private Set<Ingrediente> ingredientes = new HashSet<>();
-    
-    // Construtor e método de atualização não são práticos aqui
-    // devido às relações complexas. O Service cuidará disso.
+    @OneToMany(mappedBy = "prato", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PratoIngrediente> pratoIngredientes = new HashSet<>();
+
+    @PrePersist
+    public void gerarId() {
+        if (this.id == null || this.id.isEmpty()) {
+            Random random = new Random();
+            int numero = random.nextInt(9999);
+            this.id = String.format("P%04d", numero);
+        }
+    }
 }

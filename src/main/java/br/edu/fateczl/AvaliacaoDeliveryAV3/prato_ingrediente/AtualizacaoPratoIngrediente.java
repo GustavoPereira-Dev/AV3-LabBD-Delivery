@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record AtualizacaoPratoIngrediente(
     @NotNull(message = "O Prato é obrigatório")
-    Integer pratoId,
+    String pratoId,
 
     @NotNull(message = "O Ingrediente é obrigatório")
     Integer ingredienteId,

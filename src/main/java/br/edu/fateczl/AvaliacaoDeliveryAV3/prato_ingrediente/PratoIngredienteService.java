@@ -41,7 +41,7 @@ public class PratoIngredienteService {
         return repository.save(entidade);
     }
 
-    public void apagar(Integer pratoId, Integer ingredienteId, Integer porcaoId) {
+    public void apagar(String pratoId, Integer ingredienteId, Integer porcaoId) {
         PratoIngredienteId id = new PratoIngredienteId(pratoId, ingredienteId, porcaoId);
         repository.deleteById(id);
     }

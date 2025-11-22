@@ -13,8 +13,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.ingrediente.IngredienteService;
 import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.TipoService;
 
-import java.util.HashSet;
-
 @Controller
 @RequestMapping("/prato")
 public class PratoController {
@@ -37,14 +35,14 @@ public class PratoController {
     }
 
     @GetMapping("/formulario")
-    public String mostrarFormulario(@RequestParam(required = false) Integer id, Model model) {
+    public String mostrarFormulario(@RequestParam(required = false) String id, Model model) {
         AtualizacaoPrato dto;
         if (id != null) {
             Prato prato = pratoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Prato não encontrado"));
             dto = pratoMapper.toAtualizacaoDto(prato);
         } else {
-            dto = new AtualizacaoPrato(null, "", null, new HashSet<>());
+            dto = new AtualizacaoPrato(null, "", null, null, null);
         }
         model.addAttribute("prato", dto);
         carregarDadosParaFormulario(model); // Carrega tipos e ingredientes
@@ -78,7 +76,7 @@ public class PratoController {
 
     @GetMapping("/delete/{id}")
     @Transactional
-    public String deletar(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String deletar(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         try {
             pratoService.apagarPorId(id);
             redirectAttributes.addFlashAttribute("message", "O prato " + id + " foi apagado!");

@@ -1,5 +1,7 @@
 package br.edu.fateczl.AvaliacaoDeliveryAV3.pedido;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -15,9 +17,12 @@ public record AtualizacaoPedido(
         String clienteCpf,
         
         @NotNull(message = "Prato é obrigatório")
-        Integer pratoId,
+        String pratoId,
         
         @NotNull(message = "Porção é obrigatória")
-        Integer porcaoId
+        Integer porcaoId,
+        
+        LocalDate data
+        
 ) {
 }
