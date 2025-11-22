@@ -125,6 +125,9 @@ INSERT INTO Prato VALUES
 ('P0008', 'Misto Quente', 10.0, 2),
 ('P0009', 'Batata Frita Especial', 15.0, 5),
 ('P0010', 'Omelete Completo', 16.0, 1)
+
+SELECT * FROM Prato
+DELETE FROM Prato
 GO
 -- Define o formato de data para Ano-Mês-Dia apenas para esta execução
 SET DATEFORMAT ymd;
@@ -244,7 +247,7 @@ EXEC sp_gera_id_prato
 --Deve-se poder gerar um relatório em PDF com os dados dos pratos, ingredientes,
 --porções e valores de um determinado tipo.
 
-SELECT p.nome, p.valor, i.nome, i.formatoApresentacao, po.tamanho, po.valor
+SELECT p.nome, p.valor, i.nome, i.formatoApresentacao, po.tamanho, po.valor, t.nome
 FROM Tipo t INNER JOIN Prato p
 ON t.id = p.id_tipo
 INNER JOIN Prato_Ingrediente_Porcao pip
