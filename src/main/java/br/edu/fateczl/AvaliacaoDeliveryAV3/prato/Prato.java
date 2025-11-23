@@ -20,6 +20,7 @@ import java.util.Set;
 public class Prato {
 
     @Id
+    @Column(length = 10)
     private String id;
     
     @Column(length = 50, nullable = false) // SQL: varchar(50) NOT NULL
@@ -38,12 +39,5 @@ public class Prato {
     @OneToMany(mappedBy = "prato", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PratoIngrediente> pratoIngredientes = new HashSet<>();
 
-    @PrePersist
-    public void gerarId() {
-        if (this.id == null || this.id.isEmpty()) {
-            Random random = new Random();
-            int numero = random.nextInt(9999);
-            this.id = String.format("P%04d", numero);
-        }
-    }
+
 }

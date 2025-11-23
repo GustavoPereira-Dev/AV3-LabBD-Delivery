@@ -22,8 +22,8 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Column(precision = 7, nullable = false)
-    private Double valor;
+    @Column(nullable = false)
+    private Float valor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpf_cliente", nullable = false)

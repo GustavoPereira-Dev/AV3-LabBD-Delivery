@@ -39,15 +39,15 @@
             </thead>
             <tbody>
             <tr th:each="item : ${listaFichas}">
-                <td th:text="${item.prato.nome}"></td>
-                <td th:text="${item.ingrediente.nome}"></td>
-                <td th:text="${item.porcao.tamanho}"></td>
-                <td>
-                    <a th:href="@{/ficha-tecnica/delete(pratoId=${item.prato.id}, ingredienteId=${item.ingrediente.id}, porcaoId=${item.porcao.id})}"
-                       title="Remover Vínculo"
-                       class="fa-regular fa-trash-can icon-dark btn-delete"
-                       onclick="return confirm('Tem certeza que deseja remover este ingrediente deste prato?');"></a>
-                </td>
+				<td th:text="${item.nomePrato}"></td>
+				<td th:text="${item.nomeIngrediente}"></td>
+				<td th:text="${item.nomePorcao}"></td>
+				<td>
+            <a th:href="@{/ficha-tecnica/delete(pratoId=${item.idPrato}, ingredienteId=${item.idIngrediente}, porcaoId=${item.idPorcao})}"
+               title="Remover Vínculo"
+               class="fa-regular fa-trash-can icon-dark btn-delete"
+               onclick="return confirm('Tem certeza que deseja remover este ingrediente deste prato?');"></a>
+        </td>
             </tr>
             </tbody>
         </table>
@@ -175,18 +175,20 @@
             <button type="submit" class="btn btn-primary">Salvar Vínculo</button>
         </div>
           
-       <div class="container text-center">
-		   <form th:action="@{/pratoingrediente/relatorio}" th:object="${pedido}" method="get">
+           
+    </form>
+    
+
+</div>
+
+           <div class="container text-center">
+		   <form th:action="@{/ficha-tecnica/relatorio}" method="get" target="_blank">
 		       <div class="col" style="margin: 10px">
-		       		<button type="button" class="btn btn-info" >Relatório de dados do pratos, ingredientes, porção, valor e cliente de um determinado dia</button>
+		       		<input class="form-control" type="date" name="data" id="data">
+		       		<button type="submit" class="btn btn-info" >Relatório de dados do pratos, ingredientes, porção, valor e cliente de um determinado dia</button>
 		       </div>    
 	       </form>     
        </div>
-
-
-           
-    </form>
-</div>
 
 </body>
 </html>

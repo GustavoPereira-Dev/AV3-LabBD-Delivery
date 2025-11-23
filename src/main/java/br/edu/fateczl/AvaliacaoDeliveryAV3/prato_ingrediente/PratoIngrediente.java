@@ -19,21 +19,22 @@ public class PratoIngrediente {
     private PratoIngredienteId id = new PratoIngredienteId();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("pratoId") // Mapeia para o campo pratoId da classe PratoIngredienteId
-    @JoinColumn(name = "id_prato")
+    @MapsId("pratoId")
+    // CORREÇÃO DEFINITIVA: Forçamos o SQL Server a entender que é varchar(10)
+    // e adicionamos o insertable/updatable = false para evitar conflito com o EmbeddedId
+    @JoinColumn(name = "id_prato", columnDefinition = "varchar(10)", nullable = false)
     private Prato prato;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("ingredienteId")
-    @JoinColumn(name = "id_ingrediente")
+    @JoinColumn(name = "id_ingrediente", nullable = false)
     private Ingrediente ingrediente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("porcaoId")
-    @JoinColumn(name = "id_porcao")
+    @JoinColumn(name = "id_porcao", nullable = false)
     private Porcao porcao;
 
-    // Construtor auxiliar
     public PratoIngrediente(Prato prato, Ingrediente ingrediente, Porcao porcao) {
         this.prato = prato;
         this.ingrediente = ingrediente;

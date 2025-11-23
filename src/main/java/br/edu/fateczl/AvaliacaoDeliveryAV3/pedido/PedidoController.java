@@ -111,9 +111,11 @@ public class PedidoController {
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @GetMapping("/relatorio/{id}")
-    public ResponseEntity gerarRelatorio(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+    public ResponseEntity gerarRelatorio(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
     	String erro = "";
     	Map<String, Object> reportParams = new HashMap<>();
+    	
+    	System.out.println("Id pedido: " + id);
 		reportParams.put("id_pedido", id);
 		
 		//Conexão SQL para gerar o Report
@@ -126,7 +128,7 @@ public class PedidoController {
 		HttpHeaders header = new HttpHeaders();
 		
 		try {
-			String path = "classpath:reports/relatorio01.jasper";
+			String path = "classpath:reports/relatorio02.jasper";
 			File arquivo = ResourceUtils.getFile(path);
 			JasperReport report = (JasperReport) JRLoader
 					.loadObjectFromFile(

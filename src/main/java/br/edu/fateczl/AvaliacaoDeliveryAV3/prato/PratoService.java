@@ -21,7 +21,6 @@ public class PratoService implements IService<Prato, AtualizacaoPrato, String> {
     @Autowired private PratoRepository pratoRepository;
     @Autowired private PratoMapper pratoMapper;
     @Autowired private TipoService tipoService;
-    @Autowired private IngredienteRepository ingredienteRepository; // Usamos Repository pois é só busca
 
     @Override
     public Prato salvarOuAtualizar(AtualizacaoPrato dto) {
@@ -29,30 +28,29 @@ public class PratoService implements IService<Prato, AtualizacaoPrato, String> {
         Tipo tipo = tipoService.procurarPorId(dto.tipoId())
                 .orElseThrow(() -> new EntityNotFoundException("Tipo não encontrado com ID: " + dto.tipoId()));
 
-        // 2. Valida e busca os Ingredientes (ManyToMany)
-        Set<Ingrediente> ingredientes = new HashSet<>();
-        if (dto.ingredienteIds() != null && !dto.ingredienteIds().isEmpty()) {
-            ingredientes.addAll(ingredienteRepository.findAllById(dto.ingredienteIds()));
-            // Validação simples para garantir que todos os IDs foram encontrados
-            if (ingredientes.size() != dto.ingredienteIds().size()) {
-                throw new EntityNotFoundException("Um ou mais ingredientes não foram encontrados.");
-            }
-        }
+    	Prato prato;
 
-        Prato prato;
-        if (dto.id() != null) {
-            // Atualizando
+        // Verifica se é uma ATUALIZAÇÃO (DTO tem ID) ou INSERÇÃO (DTO sem ID)
+        if (dto.id() != null && !dto.id().isEmpty()) {
+            // Atualização: Busca o existente
             prato = pratoRepository.findById(dto.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Prato não encontrado com ID: " + dto.id()));
-            pratoMapper.updateEntityFromDto(dto, prato);
+                    .orElseThrow(() -> new EntityNotFoundException("Prato não encontrado"));
         } else {
-            // Criando
-            prato = pratoMapper.toEntityFromAtualizacao(dto);
+            // Inserção: Cria um novo
+            prato = new Prato();
+            
+            // AQUI ESTÁ A MÁGICA: Chama a Procedure no banco para gerar o ID
+            String novoId = pratoRepository.sp_gera_id_prato();
+            prato.setId(novoId);
         }
 
-        // 3. Define as relações na entidade
+        // Atualiza os demais campos
+        prato.setNome(dto.nome());
+        prato.setValor(dto.valor());
         prato.setTipo(tipo);
-
+        
+        // ... lógica para buscar e setar o Tipo (semelhante ao que você já tem) ...
+        
         return pratoRepository.save(prato);
     }
 

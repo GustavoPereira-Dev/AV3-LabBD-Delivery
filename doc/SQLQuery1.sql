@@ -41,6 +41,30 @@ CREATE TABLE prato (
     CONSTRAINT PK_Prato PRIMARY KEY (id),
     CONSTRAINT FK_Prato_Tipo FOREIGN KEY (id_tipo) REFERENCES tipo(id)
 );
+DROP TABLE prato_ingrediente_porcao
+DROP TABLE pedido
+DROP TABLE prato
+
+SELECT 
+    COLUMN_NAME, 
+    DATA_TYPE, 
+    CHARACTER_MAXIMUM_LENGTH, 
+    IS_NULLABLE
+FROM 
+    INFORMATION_SCHEMA.COLUMNS
+WHERE 
+    TABLE_NAME = 'prato';
+
+SELECT 
+    COLUMN_NAME, 
+    DATA_TYPE, 
+    CHARACTER_MAXIMUM_LENGTH, 
+    IS_NULLABLE
+FROM 
+    INFORMATION_SCHEMA.COLUMNS
+WHERE 
+    TABLE_NAME = 'prato_ingrediente_porcao';
+
 
 -- Garante que a tabela problemática seja recriada do zero pelo Hibernate com o tamanho certo
 IF OBJECT_ID('dbo.prato_ingrediente_porcao', 'U') IS NOT NULL DROP TABLE dbo.prato_ingrediente_porcao;
@@ -84,6 +108,7 @@ INSERT INTO Cliente (cpf, nome, telefone, endereco, numero, cep, pontoReferencia
 ('12312312312', 'Lucas Martins', '11988887777', 'Rua Vergueiro', 90, '04101000', 'Metrô'),
 ('32132132132', 'Beatriz Nogueira', '11977776666', 'Rua Domingos de Morais', 45, '04110000', 'Shopping')
 GO
+
 INSERT INTO Tipo VALUES
 ('Prato Principal'),
 ('Lanche'),
@@ -150,31 +175,32 @@ INSERT INTO pedido (valor, data, cpf_cliente, id_prato, id_porcao) VALUES
 (28.00, '2023-11-20', '55566677788', 'P0002', 2); -- Pedro, PF Frango M
 
 GO
-INSERT INTO Prato_Ingrediente_Porcao VALUES
+
+INSERT INTO Prato_Ingrediente_Porcao (id_prato, id_ingrediente, id_porcao) VALUES
 ('P0001', 1, 1),
 ('P0001', 2, 1),
 ('P0001', 3, 1),
 ('P0001', 4, 1)
 GO
-INSERT INTO Prato_Ingrediente_Porcao VALUES
+INSERT INTO Prato_Ingrediente_Porcao (id_prato, id_ingrediente, id_porcao) VALUES
 ('P0002', 8, 1),
 ('P0002', 9, 1),
 ('P0002', 7, 1),
 ('P0002', 5, 1),
 ('P0002', 6, 1)
 GO
-INSERT INTO Prato_Ingrediente_Porcao VALUES
+INSERT INTO Prato_Ingrediente_Porcao (id_prato, id_ingrediente, id_porcao) VALUES
 ('P0004', 8, 1),
 ('P0004', 9, 1),
 ('P0004', 7, 1),
 ('P0004', 13, 1)
 GO
-INSERT INTO Prato_Ingrediente_Porcao VALUES
+INSERT INTO Prato_Ingrediente_Porcao (id_prato, id_ingrediente, id_porcao) VALUES
 ('P0006', 3, 1),
 ('P0006', 14, 1),
 ('P0006', 1, 1)
 GO
-INSERT INTO Prato_Ingrediente_Porcao VALUES
+INSERT INTO Prato_Ingrediente_Porcao (id_prato, id_ingrediente, id_porcao) VALUES
 ('P0009', 4, 3),
 ('P0009', 13, 3),
 ('P0009', 7, 3)
@@ -226,10 +252,9 @@ WHERE nome_prato = 'X-Salada'
 --Cada prato tem um identificador único gerado aleatoriamente e iniciado pela letra P.
 
 GO
-CREATE PROCEDURE sp_gera_id_prato
+CREATE PROCEDURE sp_gera_id_prato(@idPrato VARCHAR(10) OUTPUT)
 AS
-	DECLARE @idPrato VARCHAR(10),
-			@i INT = 0
+	DECLARE @i INT = 0
 
 	WHILE @i = 0
 	BEGIN
@@ -242,7 +267,9 @@ AS
 	END
 
 --TESTE
-EXEC sp_gera_id_prato
+DECLARE @teste VARCHAR(10)
+EXEC sp_gera_id_prato @teste OUTPUT
+PRINT(@teste)
 
 --Deve-se poder gerar um relatório em PDF com os dados dos pratos, ingredientes,
 --porções e valores de um determinado tipo.
@@ -273,11 +300,13 @@ JOIN (SELECT id, SUM(valor) AS valor_total
       ORDER BY pe.id
 
 INSERT INTO Pedido (id_prato, id_porcao, cpf_cliente, valor, data) VALUES
-('P0001', 1, '11122233344', 24.0, GETDATE()),
+('P0010', 1, '11122233344', 24.0, GETDATE()),
 ('P0009', 3, '11122233344', 30.0, GETDATE())
 
+SELECT * FROM pedido
 SELECT * FROM Pedido
 
+SELECT * FROM prato
 --Deve-se poder gerar um relatório em PDF com os dados do pratos, ingredientes,
 --porção, valor e cliente de um determinado dia.
 

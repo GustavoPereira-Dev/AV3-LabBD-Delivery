@@ -21,8 +21,8 @@ public class PratoIngredienteService {
     @Autowired private IngredienteService ingredienteService;
     @Autowired private PorcaoService porcaoService;
 
-    public List<PratoIngrediente> procurarTodos() {
-        return repository.findAll();
+    public List<PratoIngredienteView> procurarTodos() {
+        return repository.findAllViaFunction();
     }
 
     public PratoIngrediente salvar(AtualizacaoPratoIngrediente dto) {

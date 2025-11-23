@@ -149,7 +149,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td rowspan="3" class="align-middle fw-bold">Pedido</td>
+                            <td rowspan="4" class="align-middle fw-bold">Pedido</td>
                             <td>Listagem Principal</td>
                             <td><code>/pedido</code></td>
                             <td><span class="badge bg-success">GET</span></td>
@@ -161,13 +161,18 @@
                             <td><span class="badge bg-success">GET</span></td>
                             <td><a th:href="@{/pedido/formulario}" class="btn btn-sm btn-info">Ir</a></td>
                         </tr>
+                        <tr>
+                            <td>Relatório</td>
+                            <td><code>/pedido/relatorio/{pedido}</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>-</td>
+                        </tr>
                          <tr>
                             <td>Salvar (API)</td>
                             <td><code>/pedido/salvar</code></td>
                             <td><span class="badge bg-warning text-dark">POST</span></td>
                             <td>-</td>
                         </tr>
-
                         <tr>
                             <td rowspan="3" class="align-middle fw-bold">Cliente</td>
                             <td>Listagem Principal</td>
@@ -228,7 +233,7 @@
                             <td>-</td>
                         </tr>
                         <tr>
-                            <td rowspan="3" class="align-middle fw-bold">Tipo de Prato</td>
+                            <td rowspan="4" class="align-middle fw-bold">Tipo de Prato</td>
                             <td>Listagem Principal</td>
                             <td><code>/tipo</code></td>
                             <td><span class="badge bg-success">GET</span></td>
@@ -239,6 +244,12 @@
                             <td><code>/tipo/formulario</code></td>
                             <td><span class="badge bg-success">GET</span></td>
                             <td><a th:href="@{/tipo/formulario}" class="btn btn-sm btn-info">Ir</a></td>
+                        </tr>
+                        <tr>
+                            <td>Relatório</td>
+                            <td><code>/tipo/relatorio/{tipo}</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>-</td>
                         </tr>
                         <tr>
                             <td>Salvar (API)</td>
@@ -266,11 +277,17 @@
                             <td>-</td>
                         </tr>
                         <tr>
-                            <td rowspan="2" class="align-middle fw-bold">Ficha técnica</td>
+                            <td rowspan="3" class="align-middle fw-bold">Ficha técnica</td>
                             <td>Listagem Principal/Novo</td>
                             <td><code>/ficha-tecnica</code></td>
                             <td><span class="badge bg-success">GET</span></td>
                             <td><a th:href="@{/ficha-tecnica}" class="btn btn-sm btn-primary">Ir</a></td>
+                        </tr>
+                        <tr>
+                            <td>Relatório</td>
+                            <td><code>/ficha-tecnica/relatorio/{data}</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>-</td>
                         </tr>
                         <tr>
                             <td>Salvar (API)</td>
@@ -278,6 +295,7 @@
                             <td><span class="badge bg-warning text-dark">POST</span></td>
                             <td>-</td>
                         </tr>
+
                     </tbody>
                 </table>
             </div>
