@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 public class PedidoService implements IService<Pedido, AtualizacaoPedido, Integer> {
     @Autowired private PedidoRepository pedidoRepository;
-    @Autowired private PedidoMapper pedidoMapper;
+    // Removido: @Autowired private PedidoMapper pedidoMapper;
     @Autowired private ClienteService clienteService;
     @Autowired private PratoService pratoService;
     @Autowired private PorcaoService porcaoService;
@@ -37,13 +37,20 @@ public class PedidoService implements IService<Pedido, AtualizacaoPedido, Intege
 
         Pedido pedido;
         if (dto.id() != null) {
-            // Atualizando
+            // Atualizando: Busca o existente
             pedido = pedidoRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Pedido não encontrado com ID: " + dto.id()));
-            pedidoMapper.updateEntityFromDto(dto, pedido);
+            
+            // Atualização manual dos campos simples (Entity <- DTO)
+            pedido.setValor(dto.valor());
+            // Se o DTO tiver data e você quiser atualizar: pedido.setData(dto.data());
         } else {
-            // Criando
-            pedido = pedidoMapper.toEntityFromAtualizacao(dto);
+            // Criando: Novo objeto
+            pedido = new Pedido();
+            
+            // Preenchimento manual (Entity <- DTO)
+            pedido.setValor(dto.valor());
+            // Data será preenchida pelo @PrePersist se for null
         }
 
         // 4. Definir relações completas
@@ -55,7 +62,7 @@ public class PedidoService implements IService<Pedido, AtualizacaoPedido, Intege
     }
 
     public List<Pedido> procurarTodos() {
-        return pedidoRepository.findAll(Sort.by("id").descending()); // Mais novos primeiro
+        return pedidoRepository.findAll(Sort.by("id").descending());
     }
 
     public void apagarPorId(Integer id) {
@@ -66,7 +73,6 @@ public class PedidoService implements IService<Pedido, AtualizacaoPedido, Intege
         return pedidoRepository.findById(id);
     }
     
- // Exemplo no ClienteService.java (fazer o mesmo em todos os outros Services)
     public long contar() {
         return pedidoRepository.count();
     }

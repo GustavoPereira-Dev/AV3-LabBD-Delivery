@@ -41,33 +41,6 @@ CREATE TABLE prato (
     CONSTRAINT PK_Prato PRIMARY KEY (id),
     CONSTRAINT FK_Prato_Tipo FOREIGN KEY (id_tipo) REFERENCES tipo(id)
 );
-DROP TABLE prato_ingrediente_porcao
-DROP TABLE pedido
-DROP TABLE prato
-
-SELECT 
-    COLUMN_NAME, 
-    DATA_TYPE, 
-    CHARACTER_MAXIMUM_LENGTH, 
-    IS_NULLABLE
-FROM 
-    INFORMATION_SCHEMA.COLUMNS
-WHERE 
-    TABLE_NAME = 'prato';
-
-SELECT 
-    COLUMN_NAME, 
-    DATA_TYPE, 
-    CHARACTER_MAXIMUM_LENGTH, 
-    IS_NULLABLE
-FROM 
-    INFORMATION_SCHEMA.COLUMNS
-WHERE 
-    TABLE_NAME = 'prato_ingrediente_porcao';
-
-
--- Garante que a tabela problemática seja recriada do zero pelo Hibernate com o tamanho certo
-IF OBJECT_ID('dbo.prato_ingrediente_porcao', 'U') IS NOT NULL DROP TABLE dbo.prato_ingrediente_porcao;
 GO
 CREATE TABLE prato_ingrediente_porcao (
     id_prato VARCHAR(10) NOT NULL,
@@ -92,8 +65,6 @@ CREATE TABLE pedido (
     CONSTRAINT FK_Pedido_Porcao FOREIGN KEY (id_porcao) REFERENCES porcao(id)
 );
 
-
-
 INSERT INTO Cliente (cpf, nome, telefone, endereco, numero, cep, pontoReferencia) VALUES
 ('11122233344', 'João Silva', '11999990001', 'Rua das Flores', 123, '01001000', 'Perto da Padaria'),
 ('22233344455', 'Maria Oliveira', '11999990002', 'Av. Paulista', 1500, '01310000', 'Prédio Comercial'),
@@ -108,7 +79,6 @@ INSERT INTO Cliente (cpf, nome, telefone, endereco, numero, cep, pontoReferencia
 ('12312312312', 'Lucas Martins', '11988887777', 'Rua Vergueiro', 90, '04101000', 'Metrô'),
 ('32132132132', 'Beatriz Nogueira', '11977776666', 'Rua Domingos de Morais', 45, '04110000', 'Shopping')
 GO
-
 INSERT INTO Tipo VALUES
 ('Prato Principal'),
 ('Lanche'),
@@ -150,10 +120,10 @@ INSERT INTO Prato VALUES
 ('P0008', 'Misto Quente', 10.0, 2),
 ('P0009', 'Batata Frita Especial', 15.0, 5),
 ('P0010', 'Omelete Completo', 16.0, 1)
-
 SELECT * FROM Prato
 DELETE FROM Prato
 GO
+
 -- Define o formato de data para Ano-Mês-Dia apenas para esta execução
 SET DATEFORMAT ymd;
 
@@ -208,44 +178,53 @@ INSERT INTO Prato_Ingrediente_Porcao (id_prato, id_ingrediente, id_porcao) VALUE
 
 --Para os pratos em tela, uma UDF com cursores deve listar os pratos, cada qual com
 --seus ingredientes.
-
-GO
 CREATE FUNCTION fn_pratos_ingredientes()
 RETURNS @tabela TABLE (
-nome_prato			VARCHAR(50),
-nome_ingrediente	VARCHAR(50)
+    id_prato            VARCHAR(10), -- Adicionado
+    id_ingrediente      INT,         -- Adicionado
+    id_porcao           INT,         -- Adicionado
+    nome_prato          VARCHAR(50),
+    nome_ingrediente    VARCHAR(50),
+    nome_porcao         VARCHAR(50)
 )
 AS
 BEGIN
-	DECLARE @nome_prato VARCHAR(50),
-			@nome_ingrediente VARCHAR(50)
+    DECLARE @id_prato VARCHAR(10),
+            @id_ingrediente INT,
+            @id_porcao INT,
+            @nome_prato VARCHAR(50),
+            @nome_ingrediente VARCHAR(50),
+            @nome_porcao VARCHAR(50)
 
-	DECLARE c CURSOR
-		FOR SELECT p.nome, i.nome
-			FROM Prato p INNER JOIN Prato_Ingrediente_Porcao pip
-			ON p.id = pip.id_prato
-			INNER JOIN Ingrediente i
-			ON pip.id_ingrediente = i.id
+    DECLARE c CURSOR FOR 
+        SELECT 
+            p.id, pip.id_ingrediente, pip.id_porcao, -- IDs
+            p.nome, i.nome, po.tamanho               -- Nomes
+        FROM Prato p 
+        INNER JOIN Prato_Ingrediente_Porcao pip ON p.id = pip.id_prato
+        INNER JOIN Ingrediente i ON pip.id_ingrediente = i.id
+        INNER JOIN porcao po ON po.id = pip.id_porcao
 
-	OPEN c
-	FETCH NEXT FROM c
-		INTO @nome_prato, @nome_ingrediente
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		INSERT INTO @tabela VALUES
-		(@nome_prato, @nome_ingrediente)
+    OPEN c
+    FETCH NEXT FROM c INTO @id_prato, @id_ingrediente, @id_porcao, @nome_prato, @nome_ingrediente, @nome_porcao
 
-		FETCH NEXT FROM c
-		INTO @nome_prato, @nome_ingrediente
-	END
-	CLOSE c
-	DEALLOCATE c
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        INSERT INTO @tabela VALUES
+        (@id_prato, @id_ingrediente, @id_porcao, @nome_prato, @nome_ingrediente, @nome_porcao)
 
-	RETURN
+        FETCH NEXT FROM c INTO @id_prato, @id_ingrediente, @id_porcao, @nome_prato, @nome_ingrediente, @nome_porcao
+    END
+    
+    CLOSE c
+    DEALLOCATE c
+
+    RETURN
 END
 
+SELECT * FROM prato
 --TESTE
-SELECT nome_prato, nome_ingrediente
+SELECT nome_prato, nome_ingrediente, nome_porcao
 FROM fn_pratos_ingredientes()
 WHERE nome_prato = 'X-Salada'
 
@@ -273,7 +252,6 @@ PRINT(@teste)
 
 --Deve-se poder gerar um relatório em PDF com os dados dos pratos, ingredientes,
 --porções e valores de um determinado tipo.
-
 SELECT p.nome, p.valor, i.nome, i.formatoApresentacao, po.tamanho, po.valor, t.nome
 FROM Tipo t INNER JOIN Prato p
 ON t.id = p.id_tipo
@@ -296,17 +274,15 @@ ON po.id = pe.id_porcao
 JOIN (SELECT id, SUM(valor) AS valor_total
       FROM Pedido
       GROUP BY id) t ON pe.id = t.id
-	  WHERE pe.id = 1
+	  -- WHERE pe.id = 1
       ORDER BY pe.id
 
 INSERT INTO Pedido (id_prato, id_porcao, cpf_cliente, valor, data) VALUES
 ('P0010', 1, '11122233344', 24.0, GETDATE()),
 ('P0009', 3, '11122233344', 30.0, GETDATE())
 
-SELECT * FROM pedido
-SELECT * FROM Pedido
 
-SELECT * FROM prato
+
 --Deve-se poder gerar um relatório em PDF com os dados do pratos, ingredientes,
 --porção, valor e cliente de um determinado dia.
 
@@ -321,4 +297,4 @@ INNER JOIN Ingrediente i
 ON i.id = pip.id_ingrediente
 INNER JOIN Porcao po
 ON po.id = pip.id_porcao
-WHERE pe.data = '2023-11-19'
+-- WHERE pe.data = '2023-11-19'

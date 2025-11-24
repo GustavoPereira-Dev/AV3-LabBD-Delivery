@@ -38,13 +38,12 @@ import br.edu.fateczl.AvaliacaoDeliveryAV3.prato.PratoService;
 public class PedidoController {
 
     @Autowired private PedidoService pedidoService;
-    @Autowired private PedidoMapper pedidoMapper;
+    // Removido: @Autowired private PedidoMapper pedidoMapper;
     @Autowired private ClienteService clienteService;
     @Autowired private PratoService pratoService;
     @Autowired private PorcaoService porcaoService;
     @Autowired private DataSource ds;
 
-    // Método auxiliar
     private void carregarDadosParaFormulario(Model model) {
         model.addAttribute("clientes", clienteService.procurarTodos());
         model.addAttribute("pratos", pratoService.procurarTodos());
@@ -63,9 +62,18 @@ public class PedidoController {
         if (id != null) {
             Pedido pedido = pedidoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Pedido não encontrado"));
-            dto = pedidoMapper.toAtualizacaoDto(pedido);
+            
+            // Conversão Manual: Entity -> DTO
+            dto = new AtualizacaoPedido(
+                pedido.getId(),
+                pedido.getValor(),
+                pedido.getCliente().getCpf(),
+                pedido.getPrato().getId(),
+                pedido.getPorcao().getId(),
+                pedido.getData()
+            );
         } else {
-            dto = new AtualizacaoPedido(null, 0.0, null, null, null, null);
+            dto = new AtualizacaoPedido(null, null, null, null, null, null);
         }
         model.addAttribute("pedido", dto);
         carregarDadosParaFormulario(model);
@@ -112,44 +120,36 @@ public class PedidoController {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @GetMapping("/relatorio/{id}")
     public ResponseEntity gerarRelatorio(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-    	String erro = "";
-    	Map<String, Object> reportParams = new HashMap<>();
-    	
-    	System.out.println("Id pedido: " + id);
-		reportParams.put("id_pedido", id);
-		
-		//Conexão SQL para gerar o Report
-		Connection conn = DataSourceUtils.getConnection(ds);
-		
-		//Inicializar elementos do report
-		byte[] bytes = null;
-		InputStreamResource resources = null;
-		HttpStatus status = null;
-		HttpHeaders header = new HttpHeaders();
-		
-		try {
-			String path = "classpath:reports/relatorio02.jasper";
-			File arquivo = ResourceUtils.getFile(path);
-			JasperReport report = (JasperReport) JRLoader
-					.loadObjectFromFile(
-							arquivo.getAbsolutePath()
-					);
-			bytes = JasperRunManager.runReportToPdf(report, reportParams, conn);
-		} catch(Exception e) {
-			erro = e.getMessage();
-			status = HttpStatus.BAD_REQUEST;
-		} finally {
-			if (erro.equals("")) {
-				ByteArrayInputStream stream = 
-						new ByteArrayInputStream(bytes);
-				resources = new InputStreamResource(stream);
-				status = HttpStatus.OK;
-				header.setContentLength(bytes.length);
-				header.setContentType(MediaType.APPLICATION_PDF);
-			}
-		}
-		
-		return new ResponseEntity(resources, header, status);
-    	
+        String erro = "";
+        Map<String, Object> reportParams = new HashMap<>();
+        
+        reportParams.put("id_pedido", id);
+        
+        Connection conn = DataSourceUtils.getConnection(ds);
+        
+        byte[] bytes = null;
+        InputStreamResource resources = null;
+        HttpStatus status = null;
+        HttpHeaders header = new HttpHeaders();
+        
+        try {
+            String path = "classpath:reports/relatorio02.jasper";
+            File arquivo = ResourceUtils.getFile(path);
+            JasperReport report = (JasperReport) JRLoader.loadObjectFromFile(arquivo.getAbsolutePath());
+            bytes = JasperRunManager.runReportToPdf(report, reportParams, conn);
+        } catch(Exception e) {
+            erro = e.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+        } finally {
+            if (erro.equals("")) {
+                ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+                resources = new InputStreamResource(stream);
+                status = HttpStatus.OK;
+                header.setContentLength(bytes.length);
+                header.setContentType(MediaType.APPLICATION_PDF);
+            }
+        }
+        
+        return new ResponseEntity(resources, header, status);
     }
 }

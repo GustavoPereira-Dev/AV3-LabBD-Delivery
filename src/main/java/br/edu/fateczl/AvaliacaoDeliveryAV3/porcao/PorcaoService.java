@@ -13,18 +13,29 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class PorcaoService implements IService<Porcao, AtualizacaoPorcao, Integer> {
     @Autowired private PorcaoRepository porcaoRepository;
-    @Autowired private PorcaoMapper porcaoMapper;
+    // Removido: @Autowired private PorcaoMapper porcaoMapper;
 
     @Override
     public Porcao salvarOuAtualizar(AtualizacaoPorcao dto) {
         if (dto.id() != null) {
-        	Porcao existente = porcaoRepository.findById(dto.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Tipo não encontrado com ID: " + dto.id()));
-        	porcaoMapper.updateEntityFromDto(dto, existente);
+            // Atualizando
+            Porcao existente = porcaoRepository.findById(dto.id())
+                    .orElseThrow(() -> new EntityNotFoundException("Porção não encontrada com ID: " + dto.id()));
+            
+            // Conversão Manual: DTO -> Entity (Atualização)
+            existente.setTamanho(dto.tamanho());
+            existente.setValor(dto.valor());
+            
             return porcaoRepository.save(existente);
         } else {
-        	Porcao novoTipo = porcaoMapper.toEntityFromAtualizacao(dto);
-            return porcaoRepository.save(novoTipo);
+            // Criando
+            Porcao novaPorcao = new Porcao();
+            
+            // Conversão Manual: DTO -> Entity (Novo)
+            novaPorcao.setTamanho(dto.tamanho());
+            novaPorcao.setValor(dto.valor());
+            
+            return porcaoRepository.save(novaPorcao);
         }
     }
     
@@ -35,7 +46,7 @@ public class PorcaoService implements IService<Porcao, AtualizacaoPorcao, Intege
     
     @Override
     public void apagarPorId(Integer id) {
-    	porcaoRepository.deleteById(id);
+        porcaoRepository.deleteById(id);
     }
     
     @Override

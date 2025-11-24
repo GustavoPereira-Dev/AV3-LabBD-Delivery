@@ -11,7 +11,7 @@ public record AtualizacaoPedido(
         
         @NotNull(message = "Valor é obrigatório")
         @Positive(message = "Valor deve ser positivo")
-        Double valor,
+        Float valor,
         
         @NotBlank(message = "Cliente é obrigatório")
         String clienteCpf,

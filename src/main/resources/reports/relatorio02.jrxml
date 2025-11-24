@@ -1,0 +1,118 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="relatorio02" language="java" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="13acf49e-4913-4d1b-bccc-113817ad15d1">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DeliveryAV3.jrdax"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50.0" bold="false"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18.0" bold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14.0" bold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle mode="Opaque" backcolor="#F0EFEF">
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<parameter name="id_pedido" class="java.lang.Integer"/>
+	<query language="SQL"><![CDATA[SELECT pr.nome, po.tamanho, pe.valor, t.valor_total
+FROM Prato pr INNER JOIN Pedido pe
+ON pr.id = pe.id_prato
+INNER JOIN Porcao po
+ON po.id = pe.id_porcao
+JOIN (SELECT id, SUM(valor) AS valor_total
+      FROM Pedido
+      GROUP BY id) t ON pe.id = t.id
+	  WHERE pe.id = $P{id_pedido}
+      ORDER BY pe.id]]></query>
+	<field name="nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="nome"/>
+	</field>
+	<field name="tamanho" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tamanho"/>
+		<property name="com.jaspersoft.studio.field.label" value="tamanho"/>
+	</field>
+	<field name="valor" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="valor"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor"/>
+	</field>
+	<field name="valor_total" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="valor_total"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor_total"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="132" splitType="Stretch">
+		<element kind="frame" uuid="6c6ca4e1-17cd-4913-93d6-5e670ea9ae8a" mode="Opaque" x="0" y="0" width="555" height="95" backcolor="#BBCCDD">
+			<element kind="textField" uuid="1eb09744-9786-4e5b-b6f7-1896f2f06e0d" x="0" y="0" width="554" height="94" fontSize="33.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA["Total do pedido " + $P{id_pedido}]]></expression>
+			</element>
+		</element>
+		<element kind="staticText" uuid="c2d8fd82-95ea-4548-bf63-b04ad3e7952e" x="0" y="114" width="185" height="18" forecolor="#000000" bold="false" hTextAlign="Center" style="Column header">
+			<text><![CDATA[Pedido]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cc8d9371-ede2-44bf-a653-7e99b51fd6c1"/>
+			<box style="Column header">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="ed41a17e-e74b-4568-87b1-b07071acf1b7" x="185" y="114" width="185" height="18" forecolor="#000000" bold="false" hTextAlign="Center" style="Column header">
+			<text><![CDATA[Porção]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="867904c1-4670-420e-a566-f42df3db4dd1"/>
+			<box style="Column header">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="aaaac814-ae26-404e-951b-9fc73b629e44" x="370" y="114" width="185" height="18" forecolor="#000000" bold="false" hTextAlign="Center" style="Column header">
+			<text><![CDATA[Valor]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bb561b18-1c08-4c0c-b3e5-37d6e24a835c"/>
+			<box style="Column header">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+			</box>
+		</element>
+	</title>
+	<pageHeader splitType="Stretch"/>
+	<columnHeader height="26" splitType="Stretch"/>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<element kind="frame" uuid="b50221b5-8254-440b-8c6f-1f0b138c9259" mode="Opaque" x="0" y="0" width="555" height="18" style="Row">
+				<element kind="textField" uuid="85c78d18-3e7f-47f6-888b-927deee3cebc" positionType="Float" x="0" y="-18" width="185" height="18" fontSize="14.0" textAdjust="StretchHeight" hTextAlign="Center" style="Detail">
+					<expression><![CDATA[$F{nome}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cc8d9371-ede2-44bf-a653-7e99b51fd6c1"/>
+				</element>
+				<element kind="textField" uuid="584a5680-f57b-48a7-bd7e-4a3317dec4e0" positionType="Float" x="185" y="-18" width="185" height="18" fontSize="14.0" textAdjust="StretchHeight" hTextAlign="Center" style="Detail">
+					<expression><![CDATA[$F{tamanho}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="867904c1-4670-420e-a566-f42df3db4dd1"/>
+				</element>
+				<element kind="textField" uuid="147035c8-3cea-4c88-be89-23bb893b5810" positionType="Float" x="370" y="-18" width="185" height="18" fontSize="14.0" textAdjust="StretchHeight" hTextAlign="Center" style="Detail">
+					<expression><![CDATA[$F{valor}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bb561b18-1c08-4c0c-b3e5-37d6e24a835c"/>
+				</element>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="7" splitType="Stretch">
+		<element kind="line" uuid="1133a906-5b71-476e-9f3e-bc97c97058c1" positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1">
+			<pen lineWidth="0.5" lineColor="#999999"/>
+		</element>
+	</columnFooter>
+	<pageFooter height="25" splitType="Stretch">
+		<element kind="frame" uuid="729c3539-f946-4d0e-a0a7-bda2815ea1b0" mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#BBCCDD">
+			<element kind="textField" uuid="4834e99c-7f6c-485a-b098-50e5187f2ab4" x="513" y="0" width="40" height="20" forecolor="#000000" fontSize="10.0" evaluationTime="Report" bold="false" vTextAlign="Middle" style="Column header">
+				<expression><![CDATA[" " + $V{PAGE_NUMBER}]]></expression>
+			</element>
+			<element kind="textField" uuid="9825b46e-76f1-469a-abb8-a1cc27aad685" x="433" y="0" width="80" height="20" forecolor="#000000" fontSize="10.0" bold="false" hTextAlign="Right" vTextAlign="Middle" style="Column header">
+				<expression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></expression>
+			</element>
+			<element kind="textField" uuid="70385b8b-22a9-46e7-afc4-99be319ce9da" x="0" y="0" width="554" height="24" fontSize="13.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA["Valor total: " + $F{valor_total}]]></expression>
+			</element>
+		</element>
+	</pageFooter>
+	<summary splitType="Stretch"/>
+</jasperReport>

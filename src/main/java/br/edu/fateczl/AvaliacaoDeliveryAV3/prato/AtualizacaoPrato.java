@@ -17,9 +17,7 @@ public record AtualizacaoPrato(
         
         @NotNull(message = "Valor é obrigatório")
         @Positive(message = "Valor deve ser positivo")
-        Double valor,
+        Double valor
 
-        // IDs dos ingredientes selecionados
-        Set<Integer> ingredienteIds
 ) {
 }

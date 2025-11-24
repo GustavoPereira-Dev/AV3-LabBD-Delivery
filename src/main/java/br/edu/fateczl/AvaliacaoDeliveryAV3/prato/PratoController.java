@@ -18,11 +18,10 @@ import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.TipoService;
 public class PratoController {
 
     @Autowired private PratoService pratoService;
-    @Autowired private PratoMapper pratoMapper;
+    // Removido: @Autowired private PratoMapper pratoMapper;
     @Autowired private TipoService tipoService;
-    @Autowired private IngredienteService ingredienteService; // Assumindo que existe um IngredienteService
+    @Autowired private IngredienteService ingredienteService;
 
-    // Método auxiliar para carregar o 'Model'
     private void carregarDadosParaFormulario(Model model) {
         model.addAttribute("tipos", tipoService.procurarTodos());
         model.addAttribute("ingredientes", ingredienteService.procurarTodos());
@@ -40,12 +39,20 @@ public class PratoController {
         if (id != null) {
             Prato prato = pratoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Prato não encontrado"));
-            dto = pratoMapper.toAtualizacaoDto(prato);
+            
+            // Conversão Manual: Entity -> DTO
+            // Nota: O 5º argumento é null pois ingredientes agora são via Ficha Técnica
+            dto = new AtualizacaoPrato(
+                prato.getId(), 
+                prato.getNome(), 
+                prato.getTipo().getId(),
+                prato.getValor()
+            );
         } else {
-            dto = new AtualizacaoPrato(null, "", null, null, null);
+            dto = new AtualizacaoPrato(null, null, null, null);
         }
         model.addAttribute("prato", dto);
-        carregarDadosParaFormulario(model); // Carrega tipos e ingredientes
+        carregarDadosParaFormulario(model);
         return "prato/formulario";
     }
 
@@ -56,7 +63,7 @@ public class PratoController {
                          Model model) {
         if (result.hasErrors()) {
             model.addAttribute("prato", dto);
-            carregarDadosParaFormulario(model); // Recarrega em caso de erro
+            carregarDadosParaFormulario(model);
             return "prato/formulario";
         }
         try {
