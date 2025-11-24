@@ -20,8 +20,6 @@ public class PratoIngrediente {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("pratoId")
-    // CORREÇÃO DEFINITIVA: Forçamos o SQL Server a entender que é varchar(10)
-    // e adicionamos o insertable/updatable = false para evitar conflito com o EmbeddedId
     @JoinColumn(name = "id_prato", columnDefinition = "varchar(10)", nullable = false)
     private Prato prato;
 

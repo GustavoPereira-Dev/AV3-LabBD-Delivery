@@ -3,6 +3,7 @@ package br.edu.fateczl.AvaliacaoDeliveryAV3.cliente;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,15 +11,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 @Controller
 @RequestMapping("/cliente")
 public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
-
-    @Autowired
-    private ClienteMapper clienteMapper;
 
     @GetMapping
     public String carregarPaginaListagem(Model model) {
@@ -30,12 +29,42 @@ public class ClienteController {
     public String mostrarFormulario(@RequestParam(required = false) String id, Model model) {
         AtualizacaoCliente dto;
         if (id != null) {
-            // Edição
             Cliente cliente = clienteService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
-            dto = clienteMapper.toAtualizacaoDto(cliente);
+            dto = new AtualizacaoCliente(cliente.getCpf(), 
+            							cliente.getNome(), 
+            							cliente.getTelefone(), 
+            							cliente.getEndereco(), 
+            							cliente.getNumero(), 
+            							cliente.getCep(), 
+            							cliente.getPontoReferencia());
+            		
+            /*        @NotBlank(message = "CPF é obrigatório")
+        @Size(min = 11, max = 11, message = "CPF deve ter 11 caracteres")
+        String cpf,
+
+        @NotBlank(message = "Nome é obrigatório")
+        String nome,
+
+        @NotBlank(message = "Telefone é obrigatório")
+        String telefone,
+        
+        @NotBlank(message = "Endereço é obrigatório")
+        String endereco,
+
+        @NotNull(message = "Número é obrigatório")
+        @Positive(message = "Número deve ser positivo")
+        Integer numero,
+
+        @NotBlank(message = "CEP é obrigatório")
+        @Size(min = 8, max = 8, message = "CEP deve ter 8 caracteres")
+        String cep,
+
+        String pontoReferencia
+             * 
+             * */
+            
         } else {
-            // Criação
             dto = new AtualizacaoCliente(null, "", "", "", 0, "", "");
         }
         model.addAttribute("cliente", dto);
@@ -49,17 +78,13 @@ public class ClienteController {
                          Model model) {
 
         if (result.hasErrors()) {
-            // Se o CPF for nulo/inválido na criação, o BindingResult pega
-            // Se o ID for de edição e tiver erros, recarrega
             model.addAttribute("cliente", dto);
             return "cliente/formulario";
         }
 
         try {
-            // Tenta salvar (se o CPF já existir, atualiza; senão, cria)
             Cliente clienteSalvo = clienteService.salvarOuAtualizar(dto);
             
-            // Verifica se o cliente já existia (pela busca no service) para definir a mensagem
             boolean eraEdicao = clienteService.procurarPorId(dto.cpf()).isPresent();
 
             String mensagem = eraEdicao
@@ -69,7 +94,6 @@ public class ClienteController {
             return "redirect:/cliente";
             
         } catch (Exception e) {
-            // Captura outras exceções (ex: banco de dados)
             redirectAttributes.addFlashAttribute("error", "Erro ao salvar cliente: " + e.getMessage());
             model.addAttribute("cliente", dto);
             return "cliente/formulario";

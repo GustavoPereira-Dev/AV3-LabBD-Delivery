@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 public class PorcaoController {
 
     @Autowired private PorcaoService porcaoService;
-    // Removido: @Autowired private PorcaoMapper porcaoMapper;
 
     @GetMapping
     public String carregarPaginaListagem(Model model) {
@@ -31,7 +30,6 @@ public class PorcaoController {
             Porcao item = porcaoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Porção não encontrada"));
             
-            // Conversão Manual: Entity -> DTO
             dto = new AtualizacaoPorcao(
                 item.getId(), 
                 item.getTamanho(), 

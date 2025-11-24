@@ -23,10 +23,10 @@ public class Prato {
     @Column(length = 10)
     private String id;
     
-    @Column(length = 50, nullable = false) // SQL: varchar(50) NOT NULL
+    @Column(length = 50, nullable = false)
     private String nome;
 
-    @Column(precision = 7, nullable = false) // SQL: DECIMAL(7,2) NOT NULL
+    @Column(precision = 7, nullable = false)
     private Double valor;
 
     @ManyToOne(fetch = FetchType.LAZY)

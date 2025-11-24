@@ -19,22 +19,17 @@ public class PratoService implements IService<Prato, AtualizacaoPrato, String> {
 
     @Override
     public Prato salvarOuAtualizar(AtualizacaoPrato dto) {
-        // 1. Valida e busca o Tipo (ManyToOne)
         Tipo tipo = tipoService.procurarPorId(dto.tipoId())
                 .orElseThrow(() -> new EntityNotFoundException("Tipo não encontrado com ID: " + dto.tipoId()));
 
     	Prato prato;
 
-        // Verifica se é uma ATUALIZAÇÃO (DTO tem ID) ou INSERÇÃO (DTO sem ID)
         if (dto.id() != null && !dto.id().isEmpty()) {
-            // Atualização: Busca o existente
             prato = pratoRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Prato não encontrado"));
         } else {
-            // Inserção: Cria um novo
             prato = new Prato();
             
-            // AQUI ESTÁ A MÁGICA: Chama a Procedure no banco para gerar o ID
             String novoId = pratoRepository.sp_gera_id_prato();
             prato.setId(novoId);
         }
@@ -43,8 +38,6 @@ public class PratoService implements IService<Prato, AtualizacaoPrato, String> {
         prato.setNome(dto.nome());
         prato.setValor(dto.valor());
         prato.setTipo(tipo);
-        
-        // ... lógica para buscar e setar o Tipo (semelhante ao que você já tem) ...
         
         return pratoRepository.save(prato);
     }

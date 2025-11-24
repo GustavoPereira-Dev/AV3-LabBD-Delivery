@@ -45,14 +45,10 @@ public class PratoIngredienteController {
 
     @GetMapping
     public String gerenciar(Model model) {
-        // 1. Carrega a lista principal da tabela
         model.addAttribute("listaFichas", service.procurarTodos());
         
-        // 2. CORREÇÃO: Inicializa o objeto 'ficha' para o formulário oculto no modal
-        // Sem isso, o Thymeleaf dá erro ao tentar renderizar o th:object="${ficha}"
         model.addAttribute("ficha", new AtualizacaoPratoIngrediente(null, null, null));
         
-        // 3. Carrega os dados dos Dropdowns (Selects) para o formulário inicial
         carregarCombos(model);
         
         return "pratoingrediente/gerenciar";
@@ -114,10 +110,8 @@ public class PratoIngredienteController {
     	
 		reportParams.put("data", data.toString());
 		
-		//Conexão SQL para gerar o Report
 		Connection conn = DataSourceUtils.getConnection(ds);
 		
-		//Inicializar elementos do report
 		byte[] bytes = null;
 		InputStreamResource resources = null;
 		HttpStatus status = null;

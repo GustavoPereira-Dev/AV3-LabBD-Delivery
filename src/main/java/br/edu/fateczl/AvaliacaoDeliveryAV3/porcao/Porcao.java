@@ -31,7 +31,7 @@ public class Porcao {
     @Column(length = 10)
     private String tamanho;
 
-    @Column(precision = 7) // Novo campo conforme DER
+    @Column(precision = 7)
     private Double valor;
 
     

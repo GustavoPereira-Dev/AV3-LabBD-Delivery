@@ -38,13 +38,12 @@ import net.sf.jasperreports.engine.util.JRLoader;
 public class TipoController {
 
     @Autowired private TipoService tipoService;
-    @Autowired private TipoMapper tipoMapper;
     @Autowired private DataSource ds;
     
     @GetMapping
     public String carregarPaginaListagem(Model model) {
         model.addAttribute("listaTipos", tipoService.procurarTodos());
-        return "tipo/listagem"; // Usará um HTML genérico
+        return "tipo/listagem";
     }
 
     @GetMapping("/formulario")
@@ -53,12 +52,12 @@ public class TipoController {
         if (id != null) {
             Tipo item = tipoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Item não encontrado"));
-            dto = tipoMapper.toAtualizacaoDto(item);
+            dto = new AtualizacaoTipo(item.getId(), item.getNome());
         } else {
             dto = new AtualizacaoTipo(null, "");
         }
         model.addAttribute("tipo", dto);
-        return "tipo/formulario"; // Usará um HTML genérico
+        return "tipo/formulario";
     }
 
     @PostMapping("/salvar")
@@ -102,10 +101,8 @@ public class TipoController {
     	Map<String, Object> reportParams = new HashMap<>();
 		reportParams.put("tipo", nome);
 		
-		//Conexão SQL para gerar o Report
 		Connection conn = DataSourceUtils.getConnection(ds);
 		
-		//Inicializar elementos do report
 		byte[] bytes = null;
 		InputStreamResource resources = null;
 		HttpStatus status = null;

@@ -15,9 +15,6 @@ public class ClienteService implements IService<Cliente, AtualizacaoCliente, Str
     @Autowired
     private ClienteRepository clienteRepository;
 
-    @Autowired
-    private ClienteMapper clienteMapper;
-
     @Override
     public Cliente salvarOuAtualizar(AtualizacaoCliente dto) {
         Optional<Cliente> existenteOptional = clienteRepository.findById(dto.cpf());
@@ -25,10 +22,25 @@ public class ClienteService implements IService<Cliente, AtualizacaoCliente, Str
         if (existenteOptional.isPresent()) {
             // Atualizando
             Cliente existente = existenteOptional.get();
-            clienteMapper.updateEntityFromDto(dto, existente);
+            
+            existente.setCpf(dto.cpf());
+            existente.setNome(dto.nome());
+            existente.setTelefone(dto.telefone());
+            existente.setEndereco(dto.endereco());
+            existente.setNumero(dto.numero());
+            existente.setCep(dto.cep());
+            existente.setCep(dto.pontoReferencia());
+            
             return clienteRepository.save(existente);
         } else {
-            Cliente novoCliente = clienteMapper.toEntityFromAtualizacao(dto);
+            Cliente novoCliente = new Cliente();
+            novoCliente.setCpf(dto.cpf());
+            novoCliente.setNome(dto.nome());
+            novoCliente.setTelefone(dto.telefone());
+            novoCliente.setEndereco(dto.endereco());
+            novoCliente.setNumero(dto.numero());
+            novoCliente.setCep(dto.cep());
+            novoCliente.setPontoReferencia(dto.pontoReferencia());
             return clienteRepository.save(novoCliente);
         }
     }

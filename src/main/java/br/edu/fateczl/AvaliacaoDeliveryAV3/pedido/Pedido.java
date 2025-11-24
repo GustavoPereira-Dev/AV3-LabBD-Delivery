@@ -29,12 +29,11 @@ public class Pedido {
     @JoinColumn(name = "cpf_cliente", nullable = false)
     private Cliente cliente;
     
-    // Mapeado para a coluna 'data' do tipo DATE no SQL
     @Column(name = "data", nullable = false)
     private LocalDate data;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prato") // SQL não tem NOT NULL explícito, mas é boa prática
+    @JoinColumn(name = "id_prato")
     private Prato prato;
 
     @ManyToOne(fetch = FetchType.LAZY)

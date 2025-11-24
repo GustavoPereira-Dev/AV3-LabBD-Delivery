@@ -18,7 +18,6 @@ import br.edu.fateczl.AvaliacaoDeliveryAV3.tipo.TipoService;
 public class PratoController {
 
     @Autowired private PratoService pratoService;
-    // Removido: @Autowired private PratoMapper pratoMapper;
     @Autowired private TipoService tipoService;
     @Autowired private IngredienteService ingredienteService;
 
@@ -40,8 +39,6 @@ public class PratoController {
             Prato prato = pratoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Prato não encontrado"));
             
-            // Conversão Manual: Entity -> DTO
-            // Nota: O 5º argumento é null pois ingredientes agora são via Ficha Técnica
             dto = new AtualizacaoPrato(
                 prato.getId(), 
                 prato.getNome(), 

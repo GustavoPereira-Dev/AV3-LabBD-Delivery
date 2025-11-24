@@ -13,19 +13,19 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class TipoService implements IService<Tipo, AtualizacaoTipo, Integer> {
     @Autowired private TipoRepository tipoRepository;
-    @Autowired private TipoMapper tipoMapper;
 
     @Override
     public Tipo salvarOuAtualizar(AtualizacaoTipo dto) {
         if (dto.id() != null) {
-            // Atualizando
             Tipo existente = tipoRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Tipo não encontrado com ID: " + dto.id()));
-            tipoMapper.updateEntityFromDto(dto, existente);
+            existente.setId(dto.id());
+            existente.setNome(dto.nome());
             return tipoRepository.save(existente);
         } else {
-            // Criando
-            Tipo novoTipo = tipoMapper.toEntityFromAtualizacao(dto);
+            Tipo novoTipo = new Tipo();
+            novoTipo.setId(dto.id());
+            novoTipo.setNome(dto.nome());
             return tipoRepository.save(novoTipo);
         }
     }

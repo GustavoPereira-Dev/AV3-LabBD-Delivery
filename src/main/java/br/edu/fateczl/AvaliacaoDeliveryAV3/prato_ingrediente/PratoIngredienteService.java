@@ -26,7 +26,6 @@ public class PratoIngredienteService {
     }
 
     public PratoIngrediente salvar(AtualizacaoPratoIngrediente dto) {
-        // Busca as entidades completas
         Prato prato = pratoService.procurarPorId(dto.pratoId())
                 .orElseThrow(() -> new EntityNotFoundException("Prato não encontrado"));
         

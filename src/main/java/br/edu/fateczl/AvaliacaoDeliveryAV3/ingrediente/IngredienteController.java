@@ -21,7 +21,6 @@ import jakarta.validation.Valid;
 public class IngredienteController {
 
     @Autowired private IngredienteService tipoService;
-    @Autowired private IngredienteMapper tipoMapper;
 
     @GetMapping
     public String carregarPaginaListagem(Model model) {
@@ -35,7 +34,8 @@ public class IngredienteController {
         if (id != null) {
         	Ingrediente item = tipoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Item não encontrado"));
-            dto = tipoMapper.toAtualizacaoDto(item);
+            dto = new AtualizacaoIngrediente(item.getId(), item.getNome(), item.getFormatoApresentacao());
+            
         } else {
             dto = new AtualizacaoIngrediente(null, null, null);
         }

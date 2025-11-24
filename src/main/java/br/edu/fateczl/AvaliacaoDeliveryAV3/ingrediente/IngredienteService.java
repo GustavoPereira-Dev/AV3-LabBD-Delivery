@@ -13,18 +13,24 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class IngredienteService implements IService<Ingrediente, AtualizacaoIngrediente, Integer>{
     @Autowired private IngredienteRepository ingredienteRepository;
-    @Autowired private IngredienteMapper ingredienteMapper;
 
     @Override
     public Ingrediente salvarOuAtualizar(AtualizacaoIngrediente dto) {
         if (dto.id() != null) {
         	Ingrediente existente = ingredienteRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Tipo não encontrado com ID: " + dto.id()));
-        	ingredienteMapper.updateEntityFromDto(dto, existente);
+        	
+        	
+        	existente.setId(dto.id());
+        	existente.setNome(dto.nome());
+        	existente.setFormatoApresentacao(dto.formatoApresentacao());
             return ingredienteRepository.save(existente);
         } else {
-        	Ingrediente novoTipo = ingredienteMapper.toEntityFromAtualizacao(dto);
-            return ingredienteRepository.save(novoTipo);
+        	Ingrediente novoIngrediente = new Ingrediente();
+        	novoIngrediente.setId(dto.id());
+        	novoIngrediente.setNome(dto.nome());
+        	novoIngrediente.setFormatoApresentacao(dto.formatoApresentacao());
+            return ingredienteRepository.save(novoIngrediente);
         }
     }
     

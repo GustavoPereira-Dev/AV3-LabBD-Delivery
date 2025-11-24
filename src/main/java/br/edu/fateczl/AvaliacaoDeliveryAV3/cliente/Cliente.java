@@ -47,7 +47,6 @@ public class Cliente {
         this.pontoReferencia = dto.pontoReferencia();
     }
 
-    // Método de atualização
     public void atualizarInformacoes(AtualizacaoCliente dto) {
         if (dto.nome() != null) this.nome = dto.nome();
         if (dto.telefone() != null) this.telefone = dto.telefone();

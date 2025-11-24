@@ -38,7 +38,6 @@ import br.edu.fateczl.AvaliacaoDeliveryAV3.prato.PratoService;
 public class PedidoController {
 
     @Autowired private PedidoService pedidoService;
-    // Removido: @Autowired private PedidoMapper pedidoMapper;
     @Autowired private ClienteService clienteService;
     @Autowired private PratoService pratoService;
     @Autowired private PorcaoService porcaoService;
@@ -63,7 +62,6 @@ public class PedidoController {
             Pedido pedido = pedidoService.procurarPorId(id)
                     .orElseThrow(() -> new EntityNotFoundException("Pedido não encontrado"));
             
-            // Conversão Manual: Entity -> DTO
             dto = new AtualizacaoPedido(
                 pedido.getId(),
                 pedido.getValor(),
